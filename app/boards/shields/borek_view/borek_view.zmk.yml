@@ -1,0 +1,7 @@
+file_format: "1"
+id: borek_view
+name: Borek's status display
+type: shield
+requires: [nice_view_header]
+features:
+  - display

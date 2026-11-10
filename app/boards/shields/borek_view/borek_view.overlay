@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) 2026 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+&nice_view_spi {
+    status = "okay";
+
+    borek_view: ls0xx@0 {
+        compatible = "sharp,ls0xx";
+        spi-max-frequency = <1000000>;
+        reg = <0>;
+        width = <160>;
+        height = <68>;
+
+        // A memory LCD has to have its polarity flipped continuously or it
+        // sits in a DC biased state, which shows up as ghosting and slowly
+        // damages the panel. The driver only does this when asked to.
+        serial-vcom-inversion;
+        serial-vcom-interval = <33>;
+    };
+};
+
+/ {
+    chosen {
+        zephyr,display = &borek_view;
+    };
+};

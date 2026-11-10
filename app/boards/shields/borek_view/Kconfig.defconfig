@@ -1,0 +1,52 @@
+# Copyright (c) 2026 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+if SHIELD_BOREK_VIEW
+
+config LS0XX_VCOM_THREAD_PRIO
+    default 11
+
+config LV_Z_VDB_SIZE
+    default 100
+
+config LV_DPI_DEF
+    default 161
+
+config LV_Z_BITS_PER_PIXEL
+    default 1
+
+choice LV_COLOR_DEPTH
+    default LV_COLOR_DEPTH_1
+endchoice
+
+# LVGL work, including the art redraws, stays off the system work queue that
+# also carries key and Bluetooth processing.
+choice ZMK_DISPLAY_WORK_QUEUE
+    default ZMK_DISPLAY_WORK_QUEUE_DEDICATED
+endchoice
+
+choice ZMK_DISPLAY_STATUS_SCREEN
+    default ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
+endchoice
+
+config LV_Z_MEM_POOL_SIZE
+    default 8192 if ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
+
+config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
+    imply BOREK_VIEW_WIDGET_STATUS
+
+config BOREK_VIEW_WIDGET_STATUS
+    bool "Status screen with battery, rotating art and layer name"
+    select LV_USE_LABEL
+    select LV_USE_IMAGE
+    select LV_USE_CANVAS
+
+config BOREK_VIEW_WIDGET_INVERTED
+    bool "Invert the status screen colors"
+
+config BOREK_VIEW_ART_ROTATE_MINUTES
+    int "Minutes between art changes"
+    default 60
+    range 1 1440
+
+endif # SHIELD_BOREK_VIEW
