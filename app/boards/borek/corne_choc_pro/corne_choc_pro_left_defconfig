@@ -26,8 +26,10 @@ CONFIG_FLASH_MAP=y
 CONFIG_ZMK_USB=y
 CONFIG_ZMK_BLE=y
 
-# Deep sleep
+# Deep sleep after two hours without a key press. Waking from deep sleep
+# means a full Bluetooth reconnect, so keep this long.
 CONFIG_ZMK_SLEEP=y
+CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=7200000
 
 # I2C for the battery fuel gauge
 CONFIG_I2C=y

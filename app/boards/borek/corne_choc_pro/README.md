@@ -10,8 +10,8 @@ This repository is a fork of [ZMK](https://github.com/zmkfirmware/zmk) that carr
 | What                                               | Where                                           |
 | -------------------------------------------------- | ----------------------------------------------- |
 | Keymap                                             | `corne_choc_pro.keymap` (this folder)           |
-| Settings shared by both halves, Bluetooth tuning   | `Kconfig.defconfig` (this folder)               |
-| Per-half hardware settings                         | `corne_choc_pro_{left,right}_defconfig`         |
+| Keyboard name, radio tuning                        | `Kconfig.defconfig` (this folder)               |
+| Sleep timeout, RGB, other ZMK settings (per half)  | `corne_choc_pro_{left,right}_defconfig`         |
 | Pins, matrix, encoders, LEDs, battery gauge        | `corne_choc_pro.dtsi`, `corne_choc_pro_*.dts`   |
 | Display: status screen, rotating art, layer name   | `app/boards/shields/borek_view/`                |
 | Firmware build                                     | `.github/workflows/borek-firmware.yml`          |

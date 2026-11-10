@@ -40,14 +40,12 @@ config ZMK_MAX17048
     default y
 
 #
-# Settings shared by both halves. Everything below is a default, so it can
-# still be overridden per build with -DCONFIG_...=...
+# Radio settings shared by both halves.
 #
-
-# Deep sleep after two hours without a key press. Waking from deep sleep
-# means a full Bluetooth reconnect, so keep this long.
-config ZMK_IDLE_SLEEP_TIMEOUT
-    default 7200000
+# Note that a default set here loses against a default ZMK itself gives an
+# option, because ZMK's Kconfig is read before this file. Options like
+# CONFIG_ZMK_IDLE_SLEEP_TIMEOUT therefore go in the two _defconfig files.
+#
 
 # Radio at +8 dBm instead of 0 dBm. Costs very little battery and gives the
 # link to the host, and the link between the halves, a lot more margin.
