@@ -17,15 +17,15 @@
  *   28 29 30 31 32 33           34 35 36 37 38 39
  *            40 41 42           43 44 45
  *
- * Layers, by index (the conditional layer below refers to them by number):
+ * Layers, by index:
  *
- *   0 QWERTY   1 NUMBER (lower)   2 SYMBOL (raise)   3 SYSTEM   4-8 spare
+ *   0 QWERTY   1 NUMBER (lower)   2 SYMBOL (raise)   3 BT   4-8 spare
  */
 
 #define QWERTY 0
 #define NUMBER 1
 #define SYMBOL 2
-#define SYSTEM 3
+#define BLUETOOTH 3
 
 / {
     behaviors {
@@ -52,15 +52,16 @@
         };
     };
 
-    conditional_layers {
-        compatible = "zmk,conditional-layers";
+    combos {
+        compatible = "zmk,combos";
 
-        // Holding both layer thumbs (LWR + RSE) gives the SYSTEM layer. It is
-        // only active while both are held, so the keyboard cannot be left on
-        // it by accident.
-        system_layer {
-            if-layers = <NUMBER SYMBOL>;
-            then-layer = <SYSTEM>;
+        // Pressing both outer thumbs (LWR + RSE) together toggles the BT
+        // layer. Press them together again to leave it; the display shows
+        // "BT" while it is on.
+        combo_bluetooth {
+            timeout-ms = <50>;
+            key-positions = <40 45>;
+            bindings = <&tog BLUETOOTH>;
         };
     };
 
@@ -114,9 +115,9 @@
             >;
         };
 
-        system_layer {
-            display-name = "SYSTEM";
-            // Active while both layer thumbs are held. Everything that can
+        bluetooth_layer {
+            display-name = "BT";
+            // Toggled with the outer thumb combo above. Everything that can
             // drop the connection lives here and nowhere else: profile
             // selection, clearing a pairing, reset and bootloader.
             //

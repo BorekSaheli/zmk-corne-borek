@@ -37,9 +37,9 @@ Four layers plus five spare ones for ZMK Studio:
 - `QWERTY`: base layer with home row mods on S D F and J K L.
 - `NUMBER`: hold the left outer thumb.
 - `SYMBOL`: hold the right outer thumb.
-- `SYSTEM`: hold both outer thumbs. Bluetooth profiles 1 to 5 are on the left home row, clear-pairing is on Z, reset and bootloader are on C and V (left half) and on comma and M (right half).
+- `BT`: press both outer thumbs together to toggle it on, and again to toggle it off. Bluetooth profiles 1 to 5 are on the left home row, clear-pairing is on Z, reset and bootloader are on C and V (left half) and on comma and M (right half).
 
-Everything that can drop the connection is on `SYSTEM` only, and that layer is only active while both thumbs are held.
+Everything that can drop the connection is on `BT` only. The layer stays on until toggled off, and the display shows `BT` while it is.
 
 The home row mod timings are at the top of the keymap, with a note on what each one does.
 
