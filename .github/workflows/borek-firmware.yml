@@ -1,0 +1,123 @@
+name: Borek's Corne firmware
+
+# Builds the firmware for both halves, plus the settings reset images, and
+# publishes them as one "firmware" artifact on the workflow run.
+
+on:
+  push:
+    branches:
+      - borek
+    paths:
+      - ".github/workflows/borek-firmware.yml"
+      - "app/**"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.artifact }}
+    runs-on: ubuntu-latest
+    container:
+      image: docker.io/zmkfirmware/zmk-build-arm:4.1
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - artifact: corne_left
+            board: corne_choc_pro_left
+            west-args: -S studio-rpc-usb-uart
+            cmake-args: -DSHIELD=borek_view
+          - artifact: corne_right
+            board: corne_choc_pro_right
+            west-args: ""
+            cmake-args: -DSHIELD=borek_view
+          - artifact: settings_reset_left
+            board: corne_choc_pro_left
+            west-args: -S studio-rpc-usb-uart
+            cmake-args: -DSHIELD=settings_reset
+          - artifact: settings_reset_right
+            board: corne_choc_pro_right
+            west-args: ""
+            cmake-args: -DSHIELD=settings_reset
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Cache west modules
+        uses: actions/cache@v6
+        env:
+          cache-name: cache-zephyr-modules
+        with:
+          path: |
+            modules/
+            tools/
+            zephyr/
+            bootloader/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('app/west.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+        timeout-minutes: 2
+        continue-on-error: true
+
+      - name: Initialize workspace (west init)
+        run: west init -l app
+
+      - name: Update modules (west update)
+        run: west update --fetch-opt=--filter=tree:0
+
+      - name: Export Zephyr CMake package (west zephyr-export)
+        run: west zephyr-export
+
+      - name: Build
+        run: west build -s app -d build -b "${{ matrix.board }}" ${{ matrix.west-args }} -- ${{ matrix.cmake-args }}
+
+      - name: Kconfig
+        if: ${{ !cancelled() }}
+        run: |
+          if [ -f build/zephyr/.config ]; then
+            grep -v -e "^#" -e "^$" build/zephyr/.config | sort
+          else
+            echo "No Kconfig output"
+          fi
+
+      - name: Devicetree
+        if: ${{ !cancelled() }}
+        run: |
+          if [ -f build/zephyr/zephyr.dts ]; then
+            cat build/zephyr/zephyr.dts
+          else
+            echo "No devicetree output"
+          fi
+
+      - name: Collect firmware
+        run: |
+          mkdir artifacts
+          cp build/zephyr/zmk.uf2 "artifacts/${{ matrix.artifact }}.uf2"
+
+      - name: Upload
+        uses: actions/upload-artifact@v7
+        with:
+          name: artifact-${{ matrix.artifact }}
+          path: artifacts
+
+  merge:
+    name: Merge firmware
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Merge artifacts
+        uses: actions/upload-artifact/merge@v7
+        with:
+          name: firmware
+          pattern: artifact-*
+          delete-merged: true
