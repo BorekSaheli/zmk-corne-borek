@@ -1,0 +1,68 @@
+# Copyright (c) 2026 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+if BOARD_CORNE_CHOC_PRO_LEFT
+
+config ZMK_SPLIT_ROLE_CENTRAL
+    default y
+
+endif # BOARD_CORNE_CHOC_PRO_LEFT
+
+if BOARD_CORNE_CHOC_PRO_LEFT || BOARD_CORNE_CHOC_PRO_RIGHT
+
+config BOARD
+    default "corne_choc_pro"
+
+# Name shown to Bluetooth and USB hosts (max. 16 characters).
+config ZMK_KEYBOARD_NAME
+    default "Boreks Corne"
+
+config ZMK_SPLIT
+    default y
+
+config BT_CTLR
+    default BT
+
+if USB
+
+config USB_NRFX
+    default y
+
+config USB_DEVICE_STACK
+    default y
+
+endif # USB
+
+config I2C
+    default y
+
+config ZMK_MAX17048
+    default y
+
+#
+# Settings shared by both halves. Everything below is a default, so it can
+# still be overridden per build with -DCONFIG_...=...
+#
+
+# Deep sleep after two hours without a key press. Waking from deep sleep
+# means a full Bluetooth reconnect, so keep this long.
+config ZMK_IDLE_SLEEP_TIMEOUT
+    default 7200000
+
+# Radio at +8 dBm instead of 0 dBm. Costs very little battery and gives the
+# link to the host, and the link between the halves, a lot more margin.
+choice BT_CTLR_TX_PWR
+    default BT_CTLR_TX_PWR_PLUS_8
+endchoice
+
+# Declare the 32 kHz crystal as less accurate than the 50 ppm default. The
+# radio then opens its receive window slightly earlier and keeps it open
+# slightly longer, which tolerates clock drift on either end of a link.
+# Hosts with sloppy clocks (older Bluetooth adapters in particular) otherwise
+# drift out of the window while the keyboard skips connection events to save
+# power, and the link times out.
+choice CLOCK_CONTROL_NRF_ACCURACY_PPM
+    default CLOCK_CONTROL_NRF_K32SRC_250PPM
+endchoice
+
+endif # BOARD_CORNE_CHOC_PRO_LEFT || BOARD_CORNE_CHOC_PRO_RIGHT

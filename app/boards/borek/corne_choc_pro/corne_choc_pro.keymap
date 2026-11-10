@@ -1,0 +1,189 @@
+/*
+ * Copyright (c) 2026 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/rgb.h>
+
+/*
+ * Key positions:
+ *
+ *    0  1  2  3  4  5  6      7  8  9 10 11 12 13
+ *   14 15 16 17 18 19 20     21 22 23 24 25 26 27
+ *   28 29 30 31 32 33           34 35 36 37 38 39
+ *            40 41 42           43 44 45
+ *
+ * Layers, by index (the conditional layer below refers to them by number):
+ *
+ *   0 QWERTY   1 NUMBER (lower)   2 SYMBOL (raise)   3 SYSTEM   4-8 spare
+ */
+
+#define QWERTY 0
+#define NUMBER 1
+#define SYMBOL 2
+#define SYSTEM 3
+
+/ {
+    behaviors {
+        // Home row mods: tap for the letter, hold for the modifier.
+        //
+        //   tapping-term-ms        how long a key has to be held on its own
+        //                          before it becomes the modifier.
+        //   quick-tap-ms           tapping the key and holding it again within
+        //                          this time repeats the letter instead.
+        //   require-prior-idle-ms  a key pressed this soon after another key
+        //                          is always the letter, which keeps fast
+        //                          typing from firing modifiers.
+        //
+        // Lower numbers make the modifiers kick in sooner, higher numbers
+        // make accidental modifiers less likely.
+        hm: homerow_mods {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <280>;
+            quick-tap-ms = <175>;
+            require-prior-idle-ms = <150>;
+            bindings = <&kp>, <&kp>;
+        };
+    };
+
+    conditional_layers {
+        compatible = "zmk,conditional-layers";
+
+        // Holding both layer thumbs (LWR + RSE) gives the SYSTEM layer. It is
+        // only active while both are held, so the keyboard cannot be left on
+        // it by accident.
+        system_layer {
+            if-layers = <NUMBER SYMBOL>;
+            then-layer = <SYSTEM>;
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+
+        default_layer {
+            display-name = "QWERTY";
+            // -------------------------------------------------------------------------------------------
+            // | TAB |  Q  |  W  |  E  |  R  |  T  | MUTE |   |  PP  |  Y  |  U  |  I  |  O  |  P  | DEL |
+            // |     |  A  |S/ALT|D/CTL|F/SFT|  G  | LALT |   | RALT |  H  |J/SFT|K/CTL|L/AGR|  ;  |  '  |
+            // |     |  Z  |  X  |  C  |  V  |  B  |                 |  N  |  M  |  ,  |  .  |  /  | ESC |
+            //                   | LWR | ESC | BSPC |                | SPC | ENT | RSE |
+            bindings = <
+                &kp TAB &kp Q &kp W      &kp E       &kp R       &kp T &kp C_MUTE &kp C_PP &kp Y &kp U       &kp I       &kp O      &kp P    &kp DEL
+                &none   &kp A &hm LALT S &hm LCTRL D &hm LSHFT F &kp G &kp LALT   &kp RALT &kp H &hm RSHFT J &hm RCTRL K &hm RALT L &kp SEMI &kp SQT
+                &none   &kp Z &kp X      &kp C       &kp V       &kp B                     &kp N &kp M       &kp COMMA   &kp DOT    &kp FSLH &kp ESC
+                                         &mo NUMBER  &kp ESC     &kp BSPC                  &kp SPACE &kp RET &mo SYMBOL
+            >;
+            // One binding per encoder: left 1, left 2, right 1, right 2.
+            sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp PG_UP PG_DN &inc_dec_kp C_PREV C_NEXT &inc_dec_kp C_BRI_DN C_BRI_UP>;
+        };
+
+        lower_layer {
+            display-name = "NUMBER";
+            // -------------------------------------------------------------------------------------------
+            // | TAB |  1  |  2  |  3  |  4  |  5  | LCTL |   | RCTL |  6  |  7  |  8  |  9  |  0  | BSPC |
+            // | CTL |     |     |     |     |     | LALT |   | RALT | LFT | DWN | UP  | RGT |     |      |
+            // | SFT |     | RGB |     |     | UNLK|                 |     |     |     |     |     |      |
+            //                   |     |     |     |                 |     |     |     |
+            bindings = <
+                &kp TAB   &kp N1 &kp N2          &kp N3 &kp N4 &kp N5         &kp LCTRL &kp RCTRL &kp N6   &kp N7   &kp N8 &kp N9    &kp N0 &kp BSPC
+                &kp LCTRL &trans &trans          &trans &trans &trans         &kp LALT  &kp RALT  &kp LEFT &kp DOWN &kp UP &kp RIGHT &trans &trans
+                &kp LSHFT &trans &rgb_ug RGB_TOG &trans &trans &studio_unlock                     &trans   &trans   &trans &trans    &trans &trans
+                                                 &trans &trans &trans                             &trans   &trans   &trans
+            >;
+        };
+
+        raise_layer {
+            display-name = "SYMBOL";
+            // -------------------------------------------------------------------------------------------
+            // | TAB |  !  |  @  |  #  |  $  |  %  | LCTL |   | RCTL |  ^  |  &  |  *  |  (  |  )  | BSPC |
+            // | CTL |     |     |     |     |     | LALT |   | RALT |  -  |  =  |  [  |  ]  |  \  |  `   |
+            // | SFT |     |     |     |     |     |                 |  _  |  +  |  {  |  }  |  |  |  ~   |
+            //                   |     |     |     |                 |     |     |     |
+            bindings = <
+                &kp TAB   &kp EXCL &kp AT &kp HASH &kp DLLR &kp PRCNT &kp LCTRL &kp RCTRL &kp CARET &kp AMPS  &kp ASTRK &kp LPAR &kp RPAR &kp BSPC
+                &kp LCTRL &trans   &trans &trans   &trans   &trans    &kp LALT  &kp RALT  &kp MINUS &kp EQUAL &kp LBKT  &kp RBKT &kp BSLH &kp GRAVE
+                &kp LSHFT &trans   &trans &trans   &trans   &trans                        &kp UNDER &kp PLUS  &kp LBRC  &kp RBRC &kp PIPE &kp TILDE
+                                          &trans   &trans   &trans                        &trans    &trans    &trans
+            >;
+        };
+
+        system_layer {
+            display-name = "SYSTEM";
+            // Active while both layer thumbs are held. Everything that can
+            // drop the connection lives here and nowhere else: profile
+            // selection, clearing a pairing, reset and bootloader.
+            //
+            // RST and BOOT act on the half they are pressed on.
+            // -------------------------------------------------------------------------------------------
+            // |     |     |     |     |     |     |      |   |      |     |     |     |     |     |      |
+            // |     | BT1 | BT2 | BT3 | BT4 | BT5 |      |   |      |     |     |     |     |     |      |
+            // |     | CLR |     | RST | BOOT|     |                 |     | BOOT| RST |     |     |      |
+            //                   |     |     |     |                 |     |     |     |
+            bindings = <
+                &trans &trans       &trans       &trans       &trans       &trans       &trans &trans &trans &trans      &trans     &trans &trans &trans
+                &trans &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &trans &trans &trans &trans      &trans     &trans &trans &trans
+                &trans &bt BT_CLR   &trans       &sys_reset   &bootloader  &trans                     &trans &bootloader &sys_reset &trans &trans &trans
+                                                 &trans       &trans       &trans                     &trans &trans      &trans
+            >;
+        };
+
+        // Spare layers, so there is room to add layers from ZMK Studio.
+
+        extra_layer_1 {
+            display-name = "EXTRA 1";
+            bindings = <
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans               &trans &trans &trans &trans &trans &trans
+                                     &trans &trans &trans               &trans &trans &trans
+            >;
+        };
+
+        extra_layer_2 {
+            display-name = "EXTRA 2";
+            bindings = <
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans               &trans &trans &trans &trans &trans &trans
+                                     &trans &trans &trans               &trans &trans &trans
+            >;
+        };
+
+        extra_layer_3 {
+            display-name = "EXTRA 3";
+            bindings = <
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans               &trans &trans &trans &trans &trans &trans
+                                     &trans &trans &trans               &trans &trans &trans
+            >;
+        };
+
+        extra_layer_4 {
+            display-name = "EXTRA 4";
+            bindings = <
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans               &trans &trans &trans &trans &trans &trans
+                                     &trans &trans &trans               &trans &trans &trans
+            >;
+        };
+
+        extra_layer_5 {
+            display-name = "EXTRA 5";
+            bindings = <
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                &trans &trans &trans &trans &trans &trans               &trans &trans &trans &trans &trans &trans
+                                     &trans &trans &trans               &trans &trans &trans
+            >;
+        };
+    };
+};

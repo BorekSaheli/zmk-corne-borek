@@ -1,0 +1,54 @@
+# Copyright (c) 2026 The ZMK Contributors
+# SPDX-License-Identifier: MIT
+
+# Hardware enablement for the left (central) half. Settings shared by both
+# halves, such as the keyboard name and the Bluetooth tuning, live in
+# Kconfig.defconfig.
+
+# Enable MPU
+CONFIG_ARM_MPU=y
+
+# Enable GPIO
+CONFIG_GPIO=y
+CONFIG_PINCTRL=y
+
+CONFIG_USE_DT_CODE_PARTITION=y
+CONFIG_BUILD_OUTPUT_UF2=y
+
+# Settings storage
+CONFIG_MPU_ALLOW_FLASH_WRITE=y
+CONFIG_NVS=y
+CONFIG_SETTINGS_NVS=y
+CONFIG_FLASH=y
+CONFIG_FLASH_PAGE_LAYOUT=y
+CONFIG_FLASH_MAP=y
+
+CONFIG_ZMK_USB=y
+CONFIG_ZMK_BLE=y
+
+# Deep sleep
+CONFIG_ZMK_SLEEP=y
+
+# I2C for the battery fuel gauge
+CONFIG_I2C=y
+CONFIG_I2C_NRFX=y
+
+# Encoders
+CONFIG_EC11=y
+CONFIG_EC11_TRIGGER_GLOBAL_THREAD=y
+
+# RGB underglow
+CONFIG_ZMK_RGB_UNDERGLOW=y
+CONFIG_ZMK_RGB_UNDERGLOW_BRT_MAX=20
+CONFIG_ZMK_RGB_UNDERGLOW_HUE_START=200
+CONFIG_ZMK_RGB_UNDERGLOW_SAT_START=98
+
+# Windows otherwise drops battery level notifications
+CONFIG_BT_GATT_ENFORCE_SUBSCRIPTION=n
+
+# Stay on the 1M PHY. Several Windows (Realtek, Intel) and older Mac
+# Bluetooth chipsets negotiate the 2M PHY badly and then drop the link.
+CONFIG_ZMK_BLE_EXPERIMENTAL_CONN=y
+
+# ZMK Studio (central half only)
+CONFIG_ZMK_STUDIO=y

@@ -1,0 +1,64 @@
+/*
+ * Copyright (c) 2026 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include <physical_layouts.dtsi>
+
+/ {
+    // 46 keys: a 3x6+3 Corne plus two extra inner keys per half on the top
+    // two rows (the encoder positions).
+    default_layout: default_layout {
+        compatible = "zmk,physical-layout";
+        display-name = "Default Layout";
+        keys  //                     w   h    x    y     rot    rx    ry
+            = <&key_physical_attrs 100 100    0   37       0     0     0>
+            , <&key_physical_attrs 100 100  100   37       0     0     0>
+            , <&key_physical_attrs 100 100  200   12       0     0     0>
+            , <&key_physical_attrs 100 100  300    0       0     0     0>
+            , <&key_physical_attrs 100 100  400   12       0     0     0>
+            , <&key_physical_attrs 100 100  500   24       0     0     0>
+            , <&key_physical_attrs 100 100  600   74       0     0     0>
+            , <&key_physical_attrs 100 100  800   74       0     0     0>
+            , <&key_physical_attrs 100 100  900   24       0     0     0>
+            , <&key_physical_attrs 100 100 1000   12       0     0     0>
+            , <&key_physical_attrs 100 100 1100    0       0     0     0>
+            , <&key_physical_attrs 100 100 1200   12       0     0     0>
+            , <&key_physical_attrs 100 100 1300   37       0     0     0>
+            , <&key_physical_attrs 100 100 1400   37       0     0     0>
+            , <&key_physical_attrs 100 100    0  137       0     0     0>
+            , <&key_physical_attrs 100 100  100  137       0     0     0>
+            , <&key_physical_attrs 100 100  200  112       0     0     0>
+            , <&key_physical_attrs 100 100  300  100       0     0     0>
+            , <&key_physical_attrs 100 100  400  112       0     0     0>
+            , <&key_physical_attrs 100 100  500  124       0     0     0>
+            , <&key_physical_attrs 100 100  600  174       0     0     0>
+            , <&key_physical_attrs 100 100  800  174       0     0     0>
+            , <&key_physical_attrs 100 100  900  124       0     0     0>
+            , <&key_physical_attrs 100 100 1000  112       0     0     0>
+            , <&key_physical_attrs 100 100 1100  100       0     0     0>
+            , <&key_physical_attrs 100 100 1200  112       0     0     0>
+            , <&key_physical_attrs 100 100 1300  137       0     0     0>
+            , <&key_physical_attrs 100 100 1400  137       0     0     0>
+            , <&key_physical_attrs 100 100    0  237       0     0     0>
+            , <&key_physical_attrs 100 100  100  237       0     0     0>
+            , <&key_physical_attrs 100 100  200  212       0     0     0>
+            , <&key_physical_attrs 100 100  300  200       0     0     0>
+            , <&key_physical_attrs 100 100  400  212       0     0     0>
+            , <&key_physical_attrs 100 100  500  224       0     0     0>
+            , <&key_physical_attrs 100 100  900  224       0     0     0>
+            , <&key_physical_attrs 100 100 1000  212       0     0     0>
+            , <&key_physical_attrs 100 100 1100  200       0     0     0>
+            , <&key_physical_attrs 100 100 1200  212       0     0     0>
+            , <&key_physical_attrs 100 100 1300  237       0     0     0>
+            , <&key_physical_attrs 100 100 1400  237       0     0     0>
+            , <&key_physical_attrs 100 100  350  312       0     0     0>
+            , <&key_physical_attrs 100 100  450  312    1200   450   412>
+            , <&key_physical_attrs 100 150  548  283    2400   548   433>
+            , <&key_physical_attrs 100 150  852  283 (-2400)   952   433>
+            , <&key_physical_attrs 100 100  950  312 (-1200)  1050   412>
+            , <&key_physical_attrs 100 100 1050  312       0     0     0>
+            ;
+    };
+};
