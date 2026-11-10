@@ -17,8 +17,13 @@
         // A memory LCD has to have its polarity flipped continuously or it
         // sits in a DC biased state, which shows up as ghosting and slowly
         // damages the panel. The driver only does this when asked to.
+        //
+        // The two polarities are not equally bright, so the flipping is
+        // visible as flicker unless it is fast. One flip every 8 ms is a
+        // 60 Hz cycle; the 33 ms that the stock nice_view shield uses is
+        // 15 Hz, which visibly flickers on this panel.
         serial-vcom-inversion;
-        serial-vcom-interval = <33>;
+        serial-vcom-interval = <8>;
     };
 };
 
