@@ -34,7 +34,7 @@ Two things to know after flashing:
 
 Four layers plus five spare ones for ZMK Studio:
 
-- `QWERTY`: base layer with home row mods on S D F and J K L.
+- `QWERTY`: base layer with home row mods on S D F and J K L. Print Screen is left of A, Win is left of Z.
 - `NUMBER`: hold the left outer thumb.
 - `SYMBOL`: hold the right outer thumb.
 - `SYSTEM`: hold both outer thumbs. Bluetooth profiles 1 to 5 are on the left home row, clear-pairing is on Z, reset and bootloader are on C and V (left half) and on comma and M (right half).
